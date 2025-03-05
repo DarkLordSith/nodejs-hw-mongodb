@@ -1,33 +1,31 @@
+import createHttpError from 'http-errors';
+import mongoose from 'mongoose';
 import { fetchAllContacts, fetchContactById } from '../services/contacts.js';
 
 export async function getAllContacts(req, res) {
-  try {
-    const contacts = await fetchAllContacts();
-    res.status(200).json({
-      status: 200,
-      message: 'Successfully found contacts!',
-      data: contacts,
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
-  }
+  const contacts = await fetchAllContacts();
+  res.status(200).json({
+    status: 200,
+    message: 'Successfully found contacts!',
+    data: contacts,
+  });
 }
 
 export async function getContactById(req, res) {
-  try {
-    const { contactId } = req.params;
-    const contact = await fetchContactById(contactId);
-
-    if (!contact) {
-      return res.status(404).json({ message: 'Contact not found' });
-    }
-
-    res.status(200).json({
-      status: 200,
-      message: `Successfully found contact with id ${contactId}!`,
-      data: contact,
-    });
-  } catch (error) {
-    res.status(500).json({ message: 'Internal server error' });
+  const { contactId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    throw createHttpError(400, 'Invalid contact ID format');
   }
+
+  const contact = await fetchContactById(contactId);
+
+  if (!contact) {
+    throw createHttpError(404, 'Contact not found');
+  }
+
+  res.status(200).json({
+    status: 200,
+    message: `Successfully found contact with id ${contactId}!`,
+    data: contact,
+  });
 }
