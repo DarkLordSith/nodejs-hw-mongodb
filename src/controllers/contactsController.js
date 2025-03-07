@@ -3,8 +3,8 @@ import mongoose from 'mongoose';
 import {
   fetchAllContacts,
   fetchContactById,
-  createStudent,
-  deleteStudent,
+  createContact,
+  removeContact,
   updateContact,
 } from '../services/contacts.js';
 
@@ -36,48 +36,28 @@ export async function getContactById(req, res) {
   });
 }
 
-export const createStudentController = async (res, req) => {
-  const student = await createStudent(req.body);
+export const createContactController = async (res, req, next) => {
+  const contact = await createContact(req.body);
 
   res.status(201).json({
     status: 201,
-    message: 'Successfully created a student',
-    data: student,
+    message: 'Successfully created a contact!',
+    data: contact,
   });
 };
 
-export const deleteStudentController = async (req, res, next) => {
+export const deleteContactController = async (req, res, next) => {
   const { contactId } = req.params;
+  const deleteContact = await removeContact(contactId);
 
-  const contact = await deleteStudent(contactId);
-
-  if (!contact) {
+  if (!deleteContact) {
     next(createHttpError(404, 'Contact not found'));
     return;
   }
   res.status(204).send();
 };
 
-export const upsertContact = async (req, res, next) => {
-  const { contactId } = req.params;
-
-  const result = await updateContact(contactId, req.body, {
-    upsert: true,
-  });
-  if (!result) {
-    next(createHttpError(404, 'Contact not found'));
-    return;
-  }
-  const status = result.isNew ? 201 : 200;
-
-  res.status(status).json({
-    status,
-    message: 'Successfully upserted a contact!',
-    data: result.student,
-  });
-};
-
-export const patchContact = async (req, res, next) => {
+export const patchContactController = async (req, res, next) => {
   const { contactId } = req.params;
   const result = await updateContact(contactId, req.body);
 
