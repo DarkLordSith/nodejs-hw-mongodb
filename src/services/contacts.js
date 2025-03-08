@@ -18,10 +18,9 @@ export const removeContact = async (contactId) => {
   return deleteContact;
 };
 
-export const updateContact = async (contactId, payload, options = {}) => {
-  const updatedContact = await Contact.findByIdAndUpdate(contactId, payload, {
+export const updateContact = async (contactId, payload) => {
+  const contact = await Contact.findByIdAndUpdate(contactId, payload, {
     new: true,
-    runValidators: true,
   });
-  return updatedContact;
+  return contact;
 };
