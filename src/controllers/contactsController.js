@@ -9,7 +9,32 @@ import {
 } from '../services/contacts.js';
 
 export async function getAllContacts(req, res) {
-  const contacts = await fetchAllContacts();
+  const {
+    page = 1,
+    perPage = 10,
+    sortBy = 'name',
+    sortOrder = 'asc',
+  } = req.query;
+
+  const validSortOrders = ['asc', 'desc'];
+  if (!validSortOrders.includes(sortOrder)) {
+    throw createHttpError(400, 'Invalid sortOrder. Use "asc" or "desc".');
+  }
+
+  const validSortFields = ['name', 'email', 'phoneNumber'];
+  if (!validSortFields.includes(sortBy)) {
+    throw createHttpError(
+      400,
+      `Invalid sortBy. Use one of: ${validSortFields.join(', ')}`,
+    );
+  }
+  const contacts = await fetchAllContacts({
+    page: Number(page),
+    perPage: Number(perPage),
+    sortBy,
+    sortOrder,
+  });
+
   res.status(200).json({
     status: 200,
     message: 'Successfully found contacts!',
@@ -48,6 +73,9 @@ export const createContactController = async (req, res) => {
 
 export const deleteContactController = async (req, res) => {
   const { contactId } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    throw createHttpError(400, 'Invalid contact ID format');
+  }
   const deleteContact = await removeContact(contactId);
 
   if (!deleteContact) {
