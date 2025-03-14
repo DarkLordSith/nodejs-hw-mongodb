@@ -14,6 +14,8 @@ export async function getAllContacts(req, res) {
     perPage = 10,
     sortBy = 'name',
     sortOrder = 'asc',
+    type,
+    isFavourite,
   } = req.query;
 
   const validSortOrders = ['asc', 'desc'];
@@ -33,6 +35,8 @@ export async function getAllContacts(req, res) {
     perPage: Number(perPage),
     sortBy,
     sortOrder,
+    type,
+    isFavourite,
   });
 
   res.status(200).json({

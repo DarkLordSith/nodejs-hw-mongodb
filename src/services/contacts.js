@@ -5,11 +5,25 @@ export async function fetchAllContacts({
   perPage = 10,
   sortBy = 'name',
   sortOrder = 'asc',
+  type,
+  isFavourite,
 }) {
   const skip = (page - 1) * perPage;
-  const totalItems = await Contact.countDocuments();
+  const filter = {};
 
-  const contacts = await Contact.find()
+  if (type) {
+    filter.contactType = type;
+  }
+  if (isFavourite !== undefined) {
+    if (isFavourite === 'true') {
+      filter.isFavourite = true;
+    } else if (isFavourite === 'false') {
+      filter.isFavourite = false;
+    }
+  }
+
+  const totalItems = await Contact.countDocuments(filter);
+  const contacts = await Contact.find(filter)
     .sort({ [sortBy]: sortOrder === 'asc' ? 1 : -1 })
     .skip(skip)
     .limit(perPage);
