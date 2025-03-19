@@ -1,4 +1,4 @@
-import express from 'express';
+import { Router } from 'express';
 import {
   getAllContacts,
   getContactById,
@@ -14,7 +14,7 @@ import {
   updateContactSchema,
 } from '../validation/contactValidation.js';
 
-const router = express.Router();
+const router = Router();
 
 router.get('/', ctrlWrapper(getAllContacts));
 router.get('/:contactId', isValidId, ctrlWrapper(getContactById));
@@ -22,6 +22,12 @@ router.post(
   '/',
   validateBody(createContactSchema),
   ctrlWrapper(createContactController),
+);
+router.put(
+  '/:contactId',
+  isValidId,
+  validateBody(createContactSchema),
+  ctrlWrapper(),
 );
 router.patch(
   '/:contactId',

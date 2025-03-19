@@ -1,0 +1,31 @@
+import { registerUser, loginUser } from '../services/auth';
+
+export const registerUserController = async (req, res) => {
+  const newUser = await registerUser(req.body);
+
+  res.status(201).json({
+    status: 201,
+    message: 'Successfully registered a user!',
+    data: newUser,
+  });
+};
+
+export const loginUserController = async (req, res) => {
+  const { accessToken, refreshToken, sessionId } = await loginUser(req.body);
+
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+  });
+
+  res.cookie('sessionId', sessionId, {
+    httpOnly: true,
+    expires: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+  });
+
+  res.json({
+    status: 200,
+    message: 'Successfully logged in an user!',
+    data: { accessToken },
+  });
+};
