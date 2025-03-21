@@ -4,9 +4,7 @@ import { User } from '../models/user';
 import { Session } from '../models/session';
 import { generateTokens } from '../utils/generateTokens';
 
-export const registerUser = async (payload) => {
-  const { name, email, password } = payload;
-
+export const registerUser = async ({ name, email, password }) => {
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     throw createHttpError(409, 'Email in use');
@@ -28,9 +26,7 @@ export const registerUser = async (payload) => {
   };
 };
 
-export const loginUser = async (payload) => {
-  const { email, password } = payload;
-
+export const loginUser = async ({ email, password }) => {
   const user = await User.findOne({ email });
   if (!user) {
     throw createHttpError(401, 'Invalid email or password');
@@ -59,4 +55,47 @@ export const loginUser = async (payload) => {
   });
 
   return { accessToken, refreshToken, sessionId: session._id };
+};
+
+export const refreshUserSession = async ({ refreshToken, sessionId }) => {
+  const existingSession = await Session.findOne({
+    _id: sessionId,
+    refreshToken,
+  });
+
+  if (!existingSession) {
+    throw createHttpError(401, 'Session not found');
+  }
+
+  const isExpired =
+    new Date() > new Date(existingSession.refreshTokenValidUntil);
+  if (isExpired) {
+    throw createHttpError(401, 'Refresh token expired');
+  }
+
+  await Session.deleteOne({ _id: sessionId });
+  const {
+    accessToken,
+    refreshToken: newRefreshToken,
+    accessTokenValidUntil,
+    refreshTokenValidUntil,
+  } = generateTokens();
+
+  const newSession = await Session.create({
+    userId: existingSession.userId,
+    accessToken,
+    refreshToken: newRefreshToken,
+    accessTokenValidUntil,
+    refreshTokenValidUntil,
+  });
+
+  return {
+    accessToken: newSession.accessToken,
+    refreshToken: newSession.refreshToken,
+    sessionId: newSession._id,
+  };
+};
+
+export const logoutUser = async (sessionId) => {
+  await Session.findByIdAndDelete(sessionId);
 };
