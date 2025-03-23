@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
+import cookieParser from 'cookie-parser';
 
 import contactsRouters from './routers/contactsRouters.js';
 import authRouter from './routers/auth.js';
@@ -11,6 +12,7 @@ export function setupServer() {
   const app = express();
   const PORT = process.env.PORT || 3000;
 
+  app.use(cookieParser());
   app.use(
     express.json({
       type: ['application/json', 'application/vnd.api+json'],

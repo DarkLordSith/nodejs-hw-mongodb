@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import { UserCollection } from '../models/user';
-import { SessionsCollection } from '../models/session';
+import { Session } from '../models/session.js';
+import { User } from '../models/user.js';
 
 dotenv.config();
 
@@ -17,4 +17,4 @@ export async function initMongoConnection() {
     process.exit(1);
   }
 }
-export { UserCollection, SessionsCollection };
+export { User, Session };

@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
 import createHttpError from 'http-errors';
-import { User } from '../models/user';
-import { Session } from '../models/session';
-import { generateTokens } from '../utils/generateTokens';
+import { User } from '../models/user.js';
+import { Session } from '../models/session.js';
+import { generateTokens } from '../utils/generateTokens.js';
 
 export const registerUser = async ({ name, email, password }) => {
   const existingUser = await User.findOne({ email });

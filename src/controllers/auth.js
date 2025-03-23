@@ -3,7 +3,7 @@ import {
   loginUser,
   refreshUserSession,
   logoutUser,
-} from '../services/auth';
+} from '../services/auth.js';
 
 export const registerUserController = async (req, res) => {
   const newUser = await registerUser(req.body);
