@@ -1,5 +1,6 @@
 import createHttpError from 'http-errors';
 import mongoose from 'mongoose';
+import cloudinary from '../config/cloudinary.js';
 import {
   fetchAllContacts,
   fetchContactById,
@@ -67,6 +68,14 @@ export async function getContactById(req, res) {
 }
 
 export const createContactController = async (req, res) => {
+  if (req.file) {
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'contacts',
+    });
+
+    req.body.photo = result.secure_url;
+  }
+
   const contact = await createContact(req.body, req.user._id);
 
   res.status(201).json({
@@ -91,15 +100,34 @@ export const deleteContactController = async (req, res) => {
 
 export const patchContactController = async (req, res) => {
   const { contactId } = req.params;
-  const result = await updateContact(contactId, req.body, req.user._id);
 
-  if (!result) {
+  if (!mongoose.Types.ObjectId.isValid(contactId)) {
+    throw createHttpError(400, 'Invalid contact ID format');
+  }
+
+  const updatedData = { ...req.body };
+
+  if (req.file) {
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'contacts',
+    });
+
+    updatedData.photo = result.secure_url;
+  }
+
+  const updatedContact = await updateContact(
+    contactId,
+    updatedData,
+    req.user._id,
+  );
+
+  if (!updatedContact) {
     throw createHttpError(404, 'Contact not found');
   }
 
   res.json({
     status: 200,
     message: 'Successfully patched a contact!',
-    data: result,
+    data: updatedContact,
   });
 };
