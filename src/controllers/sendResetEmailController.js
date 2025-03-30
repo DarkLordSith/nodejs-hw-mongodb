@@ -27,8 +27,6 @@ export const sendResetEmailController = async (req, res) => {
       status: 200,
       message: 'Reset password email has ben successfully sent.',
       data: {},
-      token, //delet on deploj
-      resetLink,
     });
   } catch (error) {
     console.error(error);
