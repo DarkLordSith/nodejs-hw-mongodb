@@ -1,6 +1,9 @@
 import createHttpError from 'http-errors';
 import mongoose from 'mongoose';
 import cloudinary from '../config/cloudinary.js';
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
 import {
   fetchAllContacts,
   fetchContactById,
@@ -100,24 +103,22 @@ export const deleteContactController = async (req, res) => {
 
 export const patchContactController = async (req, res) => {
   const { contactId } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(contactId)) {
-    throw createHttpError(400, 'Invalid contact ID format');
-  }
-
-  const updatedData = { ...req.body };
+  let photoUrl;
 
   if (req.file) {
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: 'contacts',
-    });
-
-    updatedData.photo = result.secure_url;
+    if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+      photoUrl = await saveFileToCloudinary(req.file);
+    } else {
+      photoUrl = await saveFileToUploadDir(req.file);
+    }
   }
 
   const updatedContact = await updateContact(
     contactId,
-    updatedData,
+    {
+      ...req.body,
+      photo: photoUrl,
+    },
     req.user._id,
   );
 
@@ -127,7 +128,7 @@ export const patchContactController = async (req, res) => {
 
   res.json({
     status: 200,
-    message: 'Successfully patched a contact!',
+    message: 'Successfully updated contact!',
     data: updatedContact,
   });
 };
