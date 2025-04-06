@@ -25,7 +25,7 @@ properties:
   phoneNumber:
     type: string
     description: Contact phone number
-    example: +38023456789
+    example: 3805005022223
   email:
     type: string
     description: Contact email
@@ -39,7 +39,7 @@ properties:
     type: string
     description: Contact photo url
     default: ''
-    example: 'https://res.cloudinary.com/dzpdtsced/image/upload/v1743414112/ueqfdjt5…'
+    example: 'https://res.cloudinary.com/dzpdtsced/image/upload/v1743365027/contacts/acglt0feonxfdulvczuv.jpg'
   createdAt:
     type: string
     format: date-time

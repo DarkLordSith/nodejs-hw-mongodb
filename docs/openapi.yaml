@@ -12,12 +12,21 @@ tags:
   - name: Auth
     description: Authentication endpoints
 servers:
-  - url: http://localhost:5001
+  - url: http://127.0.0.1:5001
   - url: https://nodejs-hw-mongodb-6xod.onrender.com
 paths:
   /contacts/{id}:
     get:
       $ref: ../swagger/paths/contacts/{id}/get.yaml
+    patch:
+      $ref: ../swagger/paths/contacts/{id}/patch.yaml
+    delete:
+      $ref: ../swagger/paths/contacts/{id}/delete.yaml
+  /contacts:
+    get:
+      $ref: ../swagger/paths/contacts/get.yaml
+    post:
+      $ref: ../swagger/paths/contacts/post.yaml
 components:
   securitySchemes:
     bearerAuth:

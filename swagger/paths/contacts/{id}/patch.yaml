@@ -1,0 +1,97 @@
+tags:
+  - Contacts
+summary: Update contact by id
+operationId: patchContact
+description: Update a single contact by ID
+security:
+  - bearerAuth: []
+parameters:
+  - in: path
+    name: id
+    required: true
+    schema:
+      type: string
+      example: 605c5edcfc13ae456b000011
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        type: object
+        properties:
+          name:
+            type: string
+            example: John Doe Updated
+          email:
+            type: string
+            example: updated@example.com
+          phoneNumber:
+            type: string
+            example: '3805005022223'
+          photo:
+            type: string
+            format: binary
+            example: 'https://res.cloudinary.com/dzpdtsced/image/upload/v1743365027/contacts/acglt0feonxfdulvczuv.jpg'
+          contactType:
+            type: string
+            enum: ['work', 'home', 'personal']
+            example: work
+responses:
+  '200':
+    description: Contact successfully updated
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+            - data
+          properties:
+            status:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: Contact successfully updated!
+            data:
+              $ref: '../../../components/schemas/contact.yaml'
+
+  '400':
+    description: Bad request
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            status:
+              type: integer
+              example: 400
+            message:
+              type: string
+              example: Missing fields to update
+            data:
+              type: object
+              example: {}
+
+  '401':
+    $ref: '../../../components/responses/401.yaml'
+
+  '404':
+    description: Contact not found
+    content:
+      application/json:
+        schema:
+          type: object
+          required:
+            - status
+            - message
+          properties:
+            status:
+              type: integer
+              example: 404
+            message:
+              type: string
+              example: Contact not found
+  '500':
+    $ref: ../../../components/responses/500.yaml
