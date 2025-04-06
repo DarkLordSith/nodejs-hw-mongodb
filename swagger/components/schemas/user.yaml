@@ -1,0 +1,15 @@
+type: object
+required:
+  - userId
+  - email
+  - name
+properties:
+  userId:
+    type: string
+    example: 605c5edcfc13ae456b000011
+  email:
+    type: string
+    example: user@example.com
+  name:
+    type: string
+    example: John Doe
