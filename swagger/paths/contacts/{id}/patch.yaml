@@ -15,7 +15,7 @@ parameters:
 requestBody:
   required: true
   content:
-    application/json:
+    multipart/form-data:
       schema:
         type: object
         properties:
@@ -28,14 +28,13 @@ requestBody:
           phoneNumber:
             type: string
             example: '3805005022223'
-          photo:
-            type: string
-            format: binary
-            example: 'https://res.cloudinary.com/dzpdtsced/image/upload/v1743365027/contacts/acglt0feonxfdulvczuv.jpg'
           contactType:
             type: string
             enum: ['work', 'home', 'personal']
             example: work
+          photo:
+            type: string
+            format: binary
 responses:
   '200':
     description: Contact successfully updated

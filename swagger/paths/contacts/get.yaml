@@ -10,18 +10,23 @@ parameters:
     in: query
     schema:
       type: integer
-    example: 1
+      example: 1
   - name: perPage
     in: query
     schema:
       type: integer
-    example: 10
+      example: 10
+  - name: isFavourite
+    in: query
+    schema:
+      type: boolean
+    example: true
   - name: contactType
     in: query
     schema:
       type: string
       enum: ['work', 'home', 'personal']
-    example: work
+      example: work
 responses:
   '200':
     description: List of contacts

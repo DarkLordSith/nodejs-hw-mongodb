@@ -6,16 +6,15 @@ description: Create contact
 security:
   - bearerAuth: []
 requestBody:
+  required: true
   content:
     multipart/form-data:
       schema:
         type: object
         required:
           - name
-          - email
           - phoneNumber
           - contactType
-          - photo
         properties:
           name:
             description: Contact name
@@ -30,12 +29,16 @@ requestBody:
             type: string
             enum: ['work', 'home', 'personal']
             example: work
+          isFavourite:
+            description: Is contact marked as favourite
+            type: boolean
+            example: true
           email:
             description: Contact email
             type: string
             example: john.doe@example.com
           photo:
-            description: Contact photo url
+            description: Upload image file (optional)
             type: string
             format: binary
 responses:
