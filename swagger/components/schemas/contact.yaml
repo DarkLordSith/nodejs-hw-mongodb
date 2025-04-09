@@ -35,6 +35,10 @@ properties:
     description: Type of contact
     enum: ['work', 'home', 'personal']
     example: work
+  isFavourite:
+    type: boolean
+    description: COntact is favourite or no
+    example: true
   photo:
     type: string
     description: Contact photo url
